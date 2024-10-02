@@ -11,6 +11,7 @@ all: firstfit bestfit
 clean:
 	rm -f firstfit
 	rm -f bestfit
+	rm -f memory_operations.txt
 
 # EXECUTABLE FILES
 firstfit: firstfit.c
