@@ -3,6 +3,6 @@
 
 #include "alloc_node.h"
 
-AllocNode * find_suitable_node(AllocNode * node);
+AllocNode * find_and_pop_suitable_node(AllocNode * alloc_linked_list, size_t size);
 
 #endif
