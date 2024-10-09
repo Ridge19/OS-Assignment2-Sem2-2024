@@ -9,11 +9,11 @@ typedef struct Node {
 } Node;
 
 // Linked lists to track allocated and freed memory
-Node *allocated_list = NULL;
-Node *freed_list = NULL;
+static Node *allocated_list = NULL;
+static Node *freed_list = NULL;
 
 // Output file pointer for the .txt file
-FILE *output_file;
+static FILE *output_file;
 
 // Function to create a new node
 Node* create_node(void *block, size_t size) {
