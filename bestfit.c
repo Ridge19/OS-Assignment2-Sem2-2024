@@ -12,9 +12,6 @@ typedef struct Node {
 static Node *allocated_list = NULL;
 static Node *freed_list = NULL;
 
-// Output file pointer for the .txt file
-static FILE *output_file;
-
 // Function to create a new node
 Node* create_node(void *block, size_t size) {
     Node *new_node = (Node *)malloc(sizeof(Node));
@@ -45,7 +42,7 @@ void* alloc(size_t chunk_size) {
     add_node(&allocated_list, block, chunk_size);  // Add block with size to the allocated list
 
     // Write allocation operation to the text file
-    fprintf(output_file, "Allocating %zu bytes at address %p\n", chunk_size, block);
+    printf("Allocating %zu bytes at address %p\n", chunk_size, block);
 
     return block;
 }
@@ -68,7 +65,7 @@ void dealloc(void *chunk) {
             add_node(&freed_list, chunk, current->size);
             
             // Write deallocation operation to the text file
-            fprintf(output_file, "Freeing %zu bytes at address %p\n", current->size, chunk);
+            printf("Freeing %zu bytes at address %p\n", current->size, chunk);
 
             // Free the memory
             free(chunk);
@@ -94,13 +91,7 @@ void print_list(Node *head, const char *list_name) {
 }
 
 // Main function to demonstrate the process
-int main() {
-    // Open file for writing text output
-    output_file = fopen("memory_operations.txt", "w");
-    if (output_file == NULL) {
-        printf("Failed to open file for writing\n");
-        return 1;
-    }
+int main(int argc, char *argv[]) {
 
     // Allocate memory using alloc function
     void *block1 = alloc(100); // Allocate 100 bytes
@@ -120,9 +111,6 @@ int main() {
 
     // Cleanup remaining allocated memory
     dealloc(block3);
-
-    // Close the output file
-    fclose(output_file);
 
     return 0;
 }
