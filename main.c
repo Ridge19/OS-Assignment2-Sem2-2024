@@ -9,7 +9,7 @@ static AllocNode *allocated_list = NULL;
 static AllocNode *freed_list = NULL;
 
 // Function to create a new AllocNode
-AllocNode* create_AllocNode(void *block, size_t size) {
+AllocNode* create_node(void *block, size_t size) {
     AllocNode *new_AllocNode = (AllocNode *)malloc(sizeof(AllocNode));
     if (!new_AllocNode) {
         printf("Memory allocation for AllocNode failed\n");
