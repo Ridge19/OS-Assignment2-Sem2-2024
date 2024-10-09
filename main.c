@@ -1,35 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "alloc_node.h"
 #include "node_search.h"
 
-// Node structure for linked list
-typedef struct Node {
-    void *memory_block;   // Pointer to the allocated memory
-    size_t size;          // Size of the allocated memory
-    struct Node *next;
-} Node;
-
 // Linked lists to track allocated and freed memory
-static Node *allocated_list = NULL;
-static Node *freed_list = NULL;
+static AllocNode *allocated_list = NULL;
+static AllocNode *freed_list = NULL;
 
-// Function to create a new node
-Node* create_node(void *block, size_t size) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    if (!new_node) {
-        printf("Memory allocation for node failed\n");
+// Function to create a new AllocNode
+AllocNode* create_AllocNode(void *block, size_t size) {
+    AllocNode *new_AllocNode = (AllocNode *)malloc(sizeof(AllocNode));
+    if (!new_AllocNode) {
+        printf("Memory allocation for AllocNode failed\n");
         exit(1);
     }
-    new_node->memory_block = block;
-    new_node->size = size;
-    new_node->next = NULL;
-    return new_node;
+    new_AllocNode->memory_block = block;
+    new_AllocNode->size = size;
+    new_AllocNode->next = NULL;
+    return new_AllocNode;
 }
 
 // Function to add a node to the linked list
-void add_node(Node **head, void *block, size_t size) {
-    Node *new_node = create_node(block, size);
+void add_node(AllocNode **head, void *block, size_t size) {
+    AllocNode *new_node = create_node(block, size);
     new_node->next = *head;
     *head = new_node;
 }
@@ -52,7 +46,7 @@ void* alloc(size_t chunk_size) {
 // Core deallocation function
 void dealloc(void *chunk) {
     // Search for the block in the allocated list
-    Node *prev = NULL, *current = allocated_list;
+    AllocNode *prev = NULL, *current = allocated_list;
     
     while (current != NULL) {
         if (current->memory_block == chunk) {
@@ -83,7 +77,7 @@ void dealloc(void *chunk) {
 }
 
 // Function to print the list (for debugging)
-void print_list(Node *head, const char *list_name) {
+void print_list(AllocNode *head, const char *list_name) {
     printf("%s:\n", list_name);
     while (head != NULL) {
         printf("Memory Block: %p, Size: %zu bytes -> ", head->memory_block, head->size);
