@@ -11,11 +11,10 @@ all: firstfit bestfit
 clean:
 	rm -f firstfit
 	rm -f bestfit
-	rm -f memory_operations.txt
 
 # EXECUTABLE FILES
-firstfit: firstfit.c
+firstfit: main.c node_search_firstfit_impl.c
 	$(COMP)
 
-bestfit: bestfit.c
+bestfit: main.c node_search_bestfit_impl.c
 	$(COMP)

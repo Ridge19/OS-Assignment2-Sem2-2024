@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "node_search.h"
+
 // Node structure for linked list
 typedef struct Node {
     void *memory_block;   // Pointer to the allocated memory
