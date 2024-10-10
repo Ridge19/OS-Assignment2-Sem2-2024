@@ -1,0 +1,1 @@
+- *Linux Programming by Example: The Fundamentals*, by Arnold Robbins (2004 Pearson Education)
