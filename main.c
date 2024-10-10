@@ -1,78 +1,103 @@
+#include <malloc.h> // for ptrdiff_t
+#include <stdint.h> // for int8_t
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "alloc_node.h"
 #include "node_search.h"
 
+int brk(void *end_data_segment);
+void *sbrk(ptrdiff_t increment);
+
 // Linked lists to track allocated and freed memory
 static AllocNode *allocated_list = NULL;
 static AllocNode *freed_list = NULL;
 
 // Function to create a new AllocNode
-AllocNode* create_node(void *block, size_t size) {
-    AllocNode *new_AllocNode = (AllocNode *)malloc(sizeof(AllocNode));
-    if (!new_AllocNode) {
-        printf("Memory allocation for AllocNode failed\n");
-        exit(1);
-    }
-    new_AllocNode->memory_block = block;
-    new_AllocNode->size = size;
-    new_AllocNode->next = NULL;
-    return new_AllocNode;
-}
+AllocNode * create_node(size_t chunk_size) {
 
-// Function to add a node to the linked list
-void add_node(AllocNode **head, void *block, size_t size) {
-    AllocNode *new_node = create_node(block, size);
-    new_node->next = *head;
-    *head = new_node;
+    // Create the AllocNode by growing the address space
+    AllocNode *allocation = sbrk((ptrdiff_t) 0);
+    if (brk(allocation + sizeof(AllocNode)) < 0) {
+        puts("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Create the AllocNode's memory_chunk by growing the address space
+    void* memory_chunk = sbrk((ptrdiff_t) 0);
+    if (brk(memory_chunk + chunk_size) < 0) {
+        puts("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set the values of the AllocNode
+    allocation->memory_chunk = memory_chunk;
+    allocation->chunk_size = chunk_size;
+    allocation->next = NULL;
+
+    // Return the AllocNode
+    return allocation;
 }
 
 // Core allocation function
-void* alloc(size_t chunk_size) {
-    void *block = malloc(chunk_size);
-    if (block == NULL) {
-        printf("Memory allocation failed\n");
-        exit(1);
+void * alloc(size_t chunk_size) {
+
+    // Attempt to get a node from the Freed List
+    AllocNode * allocation = find_and_pop_suitable_node(&freed_list, chunk_size);
+
+    // If a node was obtained from the Freed List, zero its memory_chunk
+    if (allocation != NULL) {
+        for (unsigned long i = 0; i < allocation->chunk_size; ++i) {
+            int8_t* current_byte = allocation->memory_chunk + i;
+            *current_byte = 0;
+        }
     }
-    add_node(&allocated_list, block, chunk_size);  // Add block with size to the allocated list
 
-    // Write allocation operation to the text file
-    printf("Allocating %zu bytes at address %p\n", chunk_size, block);
+    // If a node was not be obtained from the Freed List, make a new one
+    else {
+        allocation = create_node(chunk_size);
+    }
 
-    return block;
+    // Add the node to the front of the Allocated List
+    allocation->next = allocated_list;
+    allocated_list = allocation;
+
+    // Write allocation operation to the console
+    printf("Allocating %zu bytes at address %p\n", chunk_size, allocation->memory_chunk);
+
+    return allocation->memory_chunk;
 }
 
 // Core deallocation function
-void dealloc(void *chunk) {
+void dealloc(void *memory_chunk) {
+
     // Search for the block in the allocated list
-    AllocNode *prev = NULL, *current = allocated_list;
-    
+    AllocNode *previous = NULL;
+    AllocNode *current = allocated_list;
     while (current != NULL) {
-        if (current->memory_block == chunk) {
-            // Remove the node from the allocated list
-            if (prev == NULL) {
+        if (current->memory_chunk == memory_chunk) {
+
+            // Remove the node from the Allocated List
+            if (previous == NULL) {
                 allocated_list = current->next;
             } else {
-                prev->next = current->next;
+                previous->next = current->next;
             }
             
-            // Add the node to the freed list
-            add_node(&freed_list, chunk, current->size);
+            // Add the node to the Freed List
+            current->next = freed_list;
+            freed_list = current;
             
-            // Write deallocation operation to the text file
-            printf("Freeing %zu bytes at address %p\n", current->size, chunk);
+            // Write deallocation operation to the console
+            printf("Freeing %zu bytes at address %p\n", current->chunk_size, current->memory_chunk);
 
-            // Free the memory
-            free(chunk);
-
-            // Free the node itself
-            free(current);
             return;
         }
-        prev = current;
+
+        previous = current;
         current = current->next;
     }
+
     printf("Block not found in allocated list!\n");
 }
 
@@ -80,7 +105,7 @@ void dealloc(void *chunk) {
 void print_list(AllocNode *head, const char *list_name) {
     printf("%s:\n", list_name);
     while (head != NULL) {
-        printf("Memory Block: %p, Size: %zu bytes -> ", head->memory_block, head->size);
+        printf("Memory Block: %p, Size: %zu bytes -> ", head->memory_chunk, head->chunk_size);
         head = head->next;
     }
     printf("NULL\n");
