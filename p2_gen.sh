@@ -1,6 +1,32 @@
-Allocated List:
-Memory Block: 0x55fb85a4b420, Size: 300 bytes -> Memory Block: 0x55fb85a4b330, Size: 200 bytes -> Memory Block: 0x55fb85a4b2a0, Size: 100 bytes -> NULL
-Allocated List:
-Memory Block: 0x55fb85a4b420, Size: 300 bytes -> NULL
-Freed List:
-Memory Block: 0x55fb85a4b2a0, Size: 100 bytes -> Memory Block: 0x55fb85a4b330, Size: 200 bytes -> NULL
+#!/bin/bash
+
+n=$1
+min=1
+max=512
+x=1
+y=1
+# first 33% as alloc
+p=3
+
+first=`echo $(($1 / $p)) |bc -l`
+
+while [ $y -le $first ]
+do 
+	number=$(expr $min + $RANDOM % $max)
+	echo "alloc: $number"
+	y=$(( $y + 1 ))
+done
+
+while [ $x -le $(( $n - $first)) ]
+do
+	option=`echo $(($RANDOM%2))`
+
+	if [[ $option -eq 0 ]]
+	then 
+		number=$(expr $min + $RANDOM % $max)
+		echo "alloc: $number"
+	else
+		echo "dealloc"
+	fi
+	x=$(( $x + 1 ))
+done
