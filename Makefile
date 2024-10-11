@@ -13,8 +13,8 @@ clean:
 	rm -f bestfit
 
 # EXECUTABLE FILES
-firstfit: main.c node_search_firstfit_impl.c
+firstfit: src/main.c src/node_search_firstfit_impl.c
 	$(COMP)
 
-bestfit: main.c node_search_bestfit_impl.c
+bestfit: src/main.c src/node_search_bestfit_impl.c
 	$(COMP)
