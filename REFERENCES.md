@@ -1,3 +1,2 @@
 - *Linux Programming by Example: The Fundamentals*, by Arnold Robbins (2004 Pearson Education)
 - *C++ Essential Training*, by Bill Weinman (2022 LinkedIn Learning)
-- *Operating System Concepts*, by Abraham Silberschatz, Peter Baer Galvin, Greg Gagne (Tenth Edition)
