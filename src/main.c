@@ -20,16 +20,18 @@ static AllocNode *freed_list = NULL;
 AllocNode * create_node(size_t chunk_size) {
 
     // Create the AllocNode by growing the address space
+    // Credit: Arnold Robbins, 2004 (see REFERENCES.md)
     AllocNode *allocation = sbrk((ptrdiff_t) 0);
-    if (brk(allocation + sizeof(AllocNode)) < 0) {
-        puts("Memory allocation failed");
+    if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
+        puts("Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     // Create the AllocNode's memory_chunk by growing the address space
-    void* memory_chunk = sbrk((ptrdiff_t) 0);
+    // Credit: Arnold Robbins, 2004 (see REFERENCES.md)
+    void *memory_chunk = sbrk((ptrdiff_t) 0);
     if (brk(memory_chunk + chunk_size) < 0) {
-        puts("Memory allocation failed");
+        puts("Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
