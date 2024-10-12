@@ -3,15 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "main.h"
+
 #include "alloc_node.h"
 #include "node_search.h"
-
-int brk(void *end_data_segment);
-void *sbrk(ptrdiff_t increment);
 
 // Linked lists to track allocated and freed memory
 static AllocNode *allocated_list = NULL;
 static AllocNode *freed_list = NULL;
+
+
+
+
 
 // Function to create a new AllocNode
 AllocNode * create_node(size_t chunk_size) {
@@ -38,6 +41,10 @@ AllocNode * create_node(size_t chunk_size) {
     // Return the AllocNode
     return allocation;
 }
+
+
+
+
 
 // Core allocation function
 void * alloc(size_t chunk_size) {
@@ -67,6 +74,10 @@ void * alloc(size_t chunk_size) {
 
     return allocation->memory_chunk;
 }
+
+
+
+
 
 // Core deallocation function
 void dealloc(void *memory_chunk) {
@@ -101,6 +112,10 @@ void dealloc(void *memory_chunk) {
     printf("Block not found in allocated list!\n");
 }
 
+
+
+
+
 // Function to print the list (for debugging)
 void print_list(AllocNode *head, const char *list_name) {
     printf("%s:\n", list_name);
@@ -111,8 +126,12 @@ void print_list(AllocNode *head, const char *list_name) {
     printf("NULL\n");
 }
 
+
+
+
+
 // Main function to demonstrate the process
-int main(int argc, char *argv[]) {
+int main(int argc, char **argv) {
 
     // Allocate memory using alloc function
     void *block1 = alloc(100); // Allocate 100 bytes
