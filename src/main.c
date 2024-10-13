@@ -19,21 +19,6 @@ static AllocNode *freed_list = NULL;
 // Function to create a new AllocNode
 AllocNode * create_node(size_t chunk_size) {
 
-    // Adjust the value of chunk_size to an appropriate power of two
-    if (chunk_size > 512) {
-        puts("ERROR: Illegal argument, chunk_size must be 512 or less!\n");
-        exit(EXIT_FAILURE);
-    }
-    else if (chunk_size > 256) chunk_size = 512;
-    else if (chunk_size > 128) chunk_size = 256;
-    else if (chunk_size > 64) chunk_size = 128;
-    else if (chunk_size > 32) chunk_size = 64;
-    else if (chunk_size > 0) chunk_size = 32;
-    else {
-        puts("ERROR: Illegal argument, chunk_size cannot be zero!\n");
-        exit(EXIT_FAILURE);
-    }
-
     // Create the AllocNode by growing the address space
     // Credit: Arnold Robbins, 2004 (see REFERENCES.md)
     AllocNode *allocation = sbrk((ptrdiff_t) 0);
@@ -65,6 +50,21 @@ AllocNode * create_node(size_t chunk_size) {
 
 // Core allocation function
 void * alloc(size_t chunk_size) {
+
+    // Adjust the value of chunk_size to an appropriate power of two
+    if (chunk_size > 512) {
+        puts("ERROR: Illegal argument, chunk_size must be 512 or less!\n");
+        exit(EXIT_FAILURE);
+    }
+    else if (chunk_size > 256) chunk_size = 512;
+    else if (chunk_size > 128) chunk_size = 256;
+    else if (chunk_size > 64) chunk_size = 128;
+    else if (chunk_size > 32) chunk_size = 64;
+    else if (chunk_size > 0) chunk_size = 32;
+    else {
+        puts("ERROR: Illegal argument, chunk_size cannot be zero!\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Attempt to get a node from the Freed List
     AllocNode * allocation = find_and_pop_suitable_node(&freed_list, chunk_size);
