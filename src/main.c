@@ -38,7 +38,7 @@ void * alloc(size_t chunk_size) {
     // Attempt to get a node from the Freed List
     AllocNode * allocation = find_and_pop_suitable_node(&freed_list, chunk_size);
 
-    // If a node was obtained from the Freed List, zero its memory_chunk
+    // If an AllocNode was obtained from the Freed List, zero its memory_chunk
     if (allocation != NULL) {
         for (size_t i = 0; i < allocation->chunk_size; ++i) {
             int8_t *current_byte = allocation->memory_chunk + i;
@@ -46,7 +46,7 @@ void * alloc(size_t chunk_size) {
         }
     }
 
-    // If a node was not be obtained from the Freed List, make a new one
+    // If an AllocNode was not be obtained from the Freed List, make a new one
     else {
 
         // Create the AllocNode by growing the address space
@@ -85,10 +85,12 @@ void * alloc(size_t chunk_size) {
 // Core deallocation function
 void dealloc(void *memory_chunk) {
 
-    // Search for the block in the allocated list
+    // Iterate through the Allocated List, looking for the AllocNode containing the memory_chunk
     AllocNode *previous = NULL;
     AllocNode *current = allocated_list;
     while (current != NULL) {
+
+        // Detect the AllocNode containing the memory_chunk
         if (current->memory_chunk == memory_chunk) {
 
             // Remove the node from the Allocated List
@@ -105,13 +107,16 @@ void dealloc(void *memory_chunk) {
             // Write deallocation operation to the console
             printf("Freeing %zu bytes at address %p\n", current->chunk_size, current->memory_chunk);
 
+            // Exit the function
             return;
         }
 
+        // Move to the next AllocNode in the Allocated List
         previous = current;
         current = current->next;
     }
 
+    // Report failure to find memory_chunk
     printf("Block not found in allocated list!\n");
 }
 
@@ -141,13 +146,13 @@ int main(int argc, char **argv) {
 
     // Handle case where there are too few arguments
     if (argc < 2) {
-        puts("ERROR: Too few arguments!\n");
+        puts("ERROR: Too few arguments.\n");
         return EXIT_FAILURE;
     }
 
     // Handle case where there are too many arguments
     else if (argc > 2) {
-        puts("ERROR: Too many arguments!\n");
+        puts("ERROR: Too many arguments.\n");
         return EXIT_FAILURE;
     }
 
@@ -168,7 +173,6 @@ int main(int argc, char **argv) {
 
         // Handle "alloc" case
         if (strncmp(buffer, "alloc:", 6) == 0) {
-            // puts("ALLOC CASE:");
 
             // Get amount of bytes from instruction
             size_t chunk_size = (size_t) atoi(buffer + 7);
@@ -185,7 +189,6 @@ int main(int argc, char **argv) {
 
         // Handle "dealloc" case
         else if (strncmp(buffer, "dealloc", 7) == 0) {
-            // puts("DEALLOC CASE:");
 
             // Execute instruction
             if (allocated_list != NULL) dealloc(allocated_list->memory_chunk);
