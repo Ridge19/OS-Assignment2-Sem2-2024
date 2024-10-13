@@ -2,6 +2,7 @@
 #include <stdint.h> // for int8_t
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> // for strcmp()
 
 #include "main.h"
 
@@ -150,27 +151,6 @@ void print_list(AllocNode *head, const char *list_name) {
 // Main function to demonstrate the process
 int main(int argc, char **argv) {
 
-    // Allocate memory using alloc function
-    void *block1 = alloc(100); // Allocate 100 bytes
-    void *block2 = alloc(200); // Allocate 200 bytes
-    void *block3 = alloc(300); // Allocate 300 bytes
-    
-    // Print the allocated list for debugging
-    print_list(allocated_list, "Allocated List");
-
-    // Deallocate memory using dealloc function
-    dealloc(block2); // Free block2
-    dealloc(block1); // Free block1
-    
-    // Print both lists after freeing some blocks for debugging
-    print_list(allocated_list, "Allocated List");
-    print_list(freed_list, "Freed List");
-
-    // Cleanup remaining allocated memory
-    dealloc(block3);
-
-    puts("\n\nEND ORIGINAL TESTING CODE\n");
-
     // Add newline
     puts("");
 
@@ -187,13 +167,57 @@ int main(int argc, char **argv) {
     }
 
     // Open the first argument as a file
-    FILE *data_file = fopen(argv[2], "r");
+    FILE *data_file = fopen(argv[1], "r");
 
     // Handle case where file will not open
     if (!data_file) {
-        printf("ERROR: File %s could not be accessed.\n", argv[2]);
+        printf("ERROR: File %s could not be accessed.\n", argv[1]);
         return EXIT_FAILURE;
     }
+
+    // Declare buffer
+    char buffer[100];
+
+    // Read file and act on instructions
+    while (fgets(buffer, sizeof(buffer), data_file) != NULL) {
+
+        // Handle "alloc" case
+        if (strncmp(buffer, "alloc:", 6) == 0) {
+            // puts("ALLOC CASE:");
+
+            // Get amount of bytes from instruction
+            size_t chunk_size = (size_t) atoi(buffer + 7);
+
+            // Handle bad amount case
+            if (chunk_size <= 0) {
+                puts("ERROR: Invalid number of bytes to allocate.\n");
+                return EXIT_FAILURE;
+            }
+
+            // Execute instruction
+            alloc(chunk_size);
+        }
+
+        // Handle "dealloc" case
+        else if (strncmp(buffer, "dealloc", 7) == 0) {
+            // puts("DEALLOC CASE:");
+
+            // Execute instruction
+            if (allocated_list != NULL) dealloc(allocated_list->memory_chunk);
+        }
+
+        // Handle bad instruction case
+        else {
+            puts("ERROR: Instruction was not \"alloc\" or \"dealloc\".\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    puts("\n");
+
+    // Print results
+    print_list(allocated_list, "Allocated List");
+    print_list(freed_list, "Freed List");
     
     // Add newline and exit the program
     puts("");
