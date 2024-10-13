@@ -36,7 +36,7 @@ void * alloc(size_t chunk_size) {
         allocation->used_size = chunk_size;
 
         // Write allocation operation to the console
-        printf("Recycling  %3liB at %p\n", chunk_size, allocation->memory_chunk);
+        printf("Reusing    %3liB at %p\n", chunk_size, allocation->memory_chunk);
     }
 
     // If an AllocNode was not obtained from the Freed List, make a new one
@@ -80,7 +80,7 @@ void * alloc(size_t chunk_size) {
         allocation->used_size = used_size;
 
         // Write allocation operation to the console
-        printf("Allocating %3liB at %p\n", chunk_size, allocation->memory_chunk);
+        printf("Requesting %3liB at %p\n", chunk_size, allocation->memory_chunk);
     }
 
     // Add the node to the front of the Allocated List
@@ -193,6 +193,9 @@ int main(int argc, char **argv) {
         printf("ERROR: File %s could not be accessed.\n", argv[1]);
         return EXIT_FAILURE;
     }
+
+    // Print heading
+    puts("Action Log:");
 
     // Declare buffer
     char buffer[100];
