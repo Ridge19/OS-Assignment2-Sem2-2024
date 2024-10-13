@@ -49,6 +49,9 @@ void * alloc(size_t chunk_size) {
     // If an AllocNode was not be obtained from the Freed List, make a new one
     else {
 
+        // Store the originally requested size as a new variable
+        size_t used_size = chunk_size;
+
         // Create the AllocNode by growing the address space
         allocation = sbrk((ptrdiff_t) 0);
         if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
@@ -66,6 +69,7 @@ void * alloc(size_t chunk_size) {
         // Set the values of the AllocNode
         allocation->memory_chunk = memory_chunk;
         allocation->chunk_size = chunk_size;
+        allocation->used_size = used_size;
     }
 
     // Add the node to the front of the Allocated List
@@ -99,8 +103,10 @@ void dealloc(void *memory_chunk) {
             } else {
                 previous->next = current->next;
             }
+
+            // Set the AllocNode's used_size to zero
+            current->used_size = 0;
             
-            // Add the node to the Freed List
             current->next = freed_list;
             freed_list = current;
             
