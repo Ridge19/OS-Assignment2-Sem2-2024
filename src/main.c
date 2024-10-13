@@ -136,11 +136,24 @@ void dealloc(void *memory_chunk) {
 
 
 // Function to print the list (for debugging)
-void print_list(AllocNode *alloc_linked_list) {
-    AllocNode *head = alloc_linked_list;
-    while (head != NULL) {
-        printf("%p (%zuB) -> \n", head->memory_chunk, head->chunk_size);
-        head = head->next;
+void print_allocated_list(AllocNode *alloc_linked_list) {
+    AllocNode *node = alloc_linked_list;
+    while (node != NULL) {
+        printf("%p %3liB / %3liB -> \n", node->memory_chunk, node->used_size, node->chunk_size);
+        node = node->next;
+    }
+    puts("NULL");
+}
+
+
+
+
+
+void print_freed_list(AllocNode *alloc_linked_list) {
+    AllocNode *node = alloc_linked_list;
+    while (node != NULL) {
+        printf("%p %3liB -> \n", node->memory_chunk, node->chunk_size);
+        node = node->next;
     }
     puts("NULL");
 }
@@ -212,14 +225,14 @@ int main(int argc, char **argv) {
         }
     }
 
-    puts("\n");
+    puts("");
 
     // Print results
     puts("Allocated List:");
-    print_list(allocated_list);
+    print_allocated_list(allocated_list);
 
     puts("\nFreed List:");
-    print_list(freed_list);
+    print_freed_list(freed_list);
     
     // Add newline and exit the program
     puts("");
