@@ -46,7 +46,7 @@ void * alloc(size_t chunk_size) {
         allocation->used_size = chunk_size;
 
         // Write allocation operation to the console
-        printf("Reusing    %3liB at %p\n", chunk_size, allocation->memory_chunk);
+        printf("Reusing    %3liB at %p\n", allocation->chunk_size, allocation->memory_chunk);
     }
 
     // If an AllocNode was not obtained from the Freed List, make a new one
