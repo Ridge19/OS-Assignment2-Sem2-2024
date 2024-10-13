@@ -41,7 +41,7 @@ Either the `bestfit` or `firstfit` executables must be executed with a single ar
 For instance, compiling and running the program may look like:
 ```
 make all
-p2_gen.sh > datafile
+p2_gen.sh 20 > datafile
 ./bestfit datafile
 ```
 
