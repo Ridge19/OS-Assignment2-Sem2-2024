@@ -23,8 +23,10 @@ void * alloc(size_t chunk_size) {
     // Attempt to get a node from the Freed List
     AllocNode * allocation = find_and_pop_suitable_node(&freed_list, chunk_size);
 
-    // If an AllocNode was obtained from the Freed List, zero its memory_chunk
+    // If an AllocNode was obtained from the Freed List, modify it
     if (allocation != NULL) {
+
+        // Zero the AllocNode's memory_chunk
         for (size_t i = 0; i < allocation->chunk_size; ++i) {
             int8_t *current_byte = allocation->memory_chunk + i;
             *current_byte = 0;
@@ -33,9 +35,11 @@ void * alloc(size_t chunk_size) {
         // Replace the AllocNode's used_size
         allocation->used_size = chunk_size;
 
+        // Write allocation operation to the console
+        printf("Recycling  %3liB at %p\n", chunk_size, allocation->memory_chunk);
     }
 
-    // If an AllocNode was not be obtained from the Freed List, make a new one
+    // If an AllocNode was not obtained from the Freed List, make a new one
     else {
 
         // Store the originally requested size as a new variable
@@ -59,14 +63,14 @@ void * alloc(size_t chunk_size) {
         // Create the AllocNode by growing the address space
         allocation = sbrk((ptrdiff_t) 0);
         if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
-            puts("ERROR: Memory allocation failed\n");
+            puts("ERROR: Memory allocation failed.\n");
             exit(EXIT_FAILURE);
         }
 
         // Create the AllocNode's memory_chunk by growing the address space
         void *memory_chunk = sbrk((ptrdiff_t) 0);
         if (brk(memory_chunk + chunk_size) < 0) {
-            puts("ERROR: Memory allocation failed\n");
+            puts("ERROR: Memory allocation failed.\n");
             exit(EXIT_FAILURE);
         }
 
@@ -74,14 +78,14 @@ void * alloc(size_t chunk_size) {
         allocation->memory_chunk = memory_chunk;
         allocation->chunk_size = chunk_size;
         allocation->used_size = used_size;
+
+        // Write allocation operation to the console
+        printf("Allocating %3liB at %p\n", chunk_size, allocation->memory_chunk);
     }
 
     // Add the node to the front of the Allocated List
     allocation->next = allocated_list;
     allocated_list = allocation;
-
-    // Write allocation operation to the console
-    printf("Allocating %zu bytes at address %p\n", chunk_size, allocation->memory_chunk);
 
     return allocation->memory_chunk;
 }
@@ -101,7 +105,7 @@ void dealloc(void *memory_chunk) {
         // Detect the AllocNode containing the memory_chunk
         if (current->memory_chunk == memory_chunk) {
 
-            // Remove the node from the Allocated List
+            // Remove the AllocNode from the Allocated List
             if (previous == NULL) {
                 allocated_list = current->next;
             } else {
@@ -111,11 +115,12 @@ void dealloc(void *memory_chunk) {
             // Set the AllocNode's used_size to zero
             current->used_size = 0;
             
+            // Add the AllocNode to the Freed List
             current->next = freed_list;
             freed_list = current;
             
             // Write deallocation operation to the console
-            printf("Freeing %zu bytes at address %p\n", current->chunk_size, current->memory_chunk);
+            printf("Freeing    %3liB at %p\n", current->chunk_size, current->memory_chunk);
 
             // Exit the function
             return;
