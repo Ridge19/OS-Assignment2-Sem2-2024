@@ -17,7 +17,17 @@ static AllocNode *freed_list = NULL;
 
 
 
-// Core allocation function
+/*
+ * This function accepts a size_t representing the amount of memory requested in bytes, and returns
+ * a void* corresponding to a place in memory which can safely store that much data *at minimum*.
+ * 
+ * The space is requested from the operating system if necessary, or recycled from the freed_list if
+ * possible.
+ * 
+ * This operation is recorded by adding a node to the allocated_list. This node was either
+ * previously on the freed_list if recycled, or generated anew if the address space was requested
+ * from the operating system.
+ */
 void * alloc(size_t chunk_size) {
 
     // Attempt to get a node from the Freed List
@@ -94,7 +104,10 @@ void * alloc(size_t chunk_size) {
 
 
 
-// Core deallocation function
+/*
+ * This function accepts a void* previously returned by alloc(). The void* provided is "given back"
+ * (stored in the freed_list), allowing it to be returned by future alloc calls. 
+ */
 void dealloc(void *memory_chunk) {
 
     // Iterate through the Allocated List, looking for the AllocNode containing the memory_chunk
@@ -140,7 +153,9 @@ void dealloc(void *memory_chunk) {
 
 
 
-// Function to print the list (for debugging)
+/*
+ * This is a function designed to neatly print the contents of the allocated_list.
+ */
 void print_allocated_list(AllocNode *alloc_linked_list) {
     AllocNode *node = alloc_linked_list;
     while (node != NULL) {
@@ -154,6 +169,9 @@ void print_allocated_list(AllocNode *alloc_linked_list) {
 
 
 
+/*
+ * This is a function designed to neatly print the contents of the freed_list.
+ */
 void print_freed_list(AllocNode *alloc_linked_list) {
     AllocNode *node = alloc_linked_list;
     while (node != NULL) {
@@ -167,7 +185,10 @@ void print_freed_list(AllocNode *alloc_linked_list) {
 
 
 
-// Main function to demonstrate the process
+/*
+ * The main function invokes the alloc and dealloc functions according to instructions provided in a
+ * file specified as the sole argument. 
+ */
 int main(int argc, char **argv) {
 
     // Add newline
