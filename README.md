@@ -17,7 +17,7 @@ How to run the program:
 - to make compilation easier, we have included a makefile, thus compiliation of the program 
 is done by the command *make*.
 - to execute the program, in terminal type *./bestfit* or *./firstfit*
-- to remove the executable files created by the *make* command, type *make clean*
+- to remove the executable files created, type *make clean*
 
 program infomration 
 -----------------------------
