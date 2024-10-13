@@ -254,6 +254,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    // Add newline
     puts("");
 
     // Print results
