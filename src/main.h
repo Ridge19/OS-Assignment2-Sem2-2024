@@ -3,9 +3,11 @@
 
 #include "alloc_node.h"
 
+// brk and sbrk method declarations
 int brk(void *end_data_segment);
 void * sbrk(ptrdiff_t chunk_size);
 
+// main.c method declarations
 void * alloc(size_t chunk_size);
 void dealloc(void *memory_chunk);
 
