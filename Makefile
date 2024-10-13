@@ -12,6 +12,10 @@ clean:
 	rm -f firstfit
 	rm -f bestfit
 
+# HEADER FILE SUPPORT
+src/%.c: src/%.h
+	@touch $@
+
 # EXECUTABLE FILES
 firstfit: src/main.c src/node_search_firstfit_impl.c
 	$(COMP)
