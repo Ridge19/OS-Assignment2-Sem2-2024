@@ -120,13 +120,13 @@ void dealloc(void *memory_chunk) {
 
 
 // Function to print the list (for debugging)
-void print_list(AllocNode *head, const char *list_name) {
-    printf("%s:\n", list_name);
+void print_list(AllocNode *alloc_linked_list) {
+    AllocNode *head = alloc_linked_list;
     while (head != NULL) {
-        printf("Memory Block: %p, Size: %zu bytes -> ", head->memory_chunk, head->chunk_size);
+        printf("%p (%zuB) -> \n", head->memory_chunk, head->chunk_size);
         head = head->next;
     }
-    printf("NULL\n");
+    puts("NULL");
 }
 
 
@@ -201,8 +201,11 @@ int main(int argc, char **argv) {
     puts("\n");
 
     // Print results
-    print_list(allocated_list, "Allocated List");
-    print_list(freed_list, "Freed List");
+    puts("Allocated List:");
+    print_list(allocated_list);
+
+    puts("\nFreed List:");
+    print_list(freed_list);
     
     // Add newline and exit the program
     puts("");

@@ -8,7 +8,7 @@ void * sbrk(ptrdiff_t chunk_size);
 
 void * alloc(size_t chunk_size);
 void dealloc(void *memory_chunk);
-void print_list(AllocNode *head, const char *list_name);
+void print_list(AllocNode *alloc_linked_list);
 int main(int argc, char **argv);
 
 #endif
