@@ -17,7 +17,7 @@ Introduction
 
 This program is a demonstration of managing allocated memory in a process.
 
-It reads a `datafile` (see *Running the Program*), containing instructions to allocated and deallocate memory.
+It reads a `datafile` (see *Running the Program*), containing instructions to allocate and deallocate memory.
 
 The program requests additional space from the operating system where necessary, reuses space where possible, and gives space back when the program has ended.
 
@@ -38,9 +38,9 @@ Running the Program
 
 Either the `bestfit` or `firstfit` executables must be executed with a single argument containing the filepath of a `datafile`.
 
-For instance:
+For instance, compiling and running the program may look like:
 ```
-make bestfit
+make all
 p2_gen.sh > datafile
 ./bestfit datafile
 ```
