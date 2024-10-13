@@ -21,7 +21,7 @@ AllocNode * create_node(size_t chunk_size) {
 
     // Adjust the value of chunk_size to an appropriate power of two
     if (chunk_size > 512) {
-        puts("Illegal argument, chunk_size is too big!\n");
+        puts("ERROR: Illegal argument, chunk_size must be 512 or less!\n");
         exit(EXIT_FAILURE);
     }
     else if (chunk_size > 256) chunk_size = 512;
@@ -30,7 +30,7 @@ AllocNode * create_node(size_t chunk_size) {
     else if (chunk_size > 32) chunk_size = 64;
     else if (chunk_size > 0) chunk_size = 32;
     else {
-        puts("Illegal argument, chunk_size cannot be zero!\n");
+        puts("ERROR: Illegal argument, chunk_size cannot be zero!\n");
         exit(EXIT_FAILURE);
     }
 
@@ -38,7 +38,7 @@ AllocNode * create_node(size_t chunk_size) {
     // Credit: Arnold Robbins, 2004 (see REFERENCES.md)
     AllocNode *allocation = sbrk((ptrdiff_t) 0);
     if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
-        puts("Memory allocation failed\n");
+        puts("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -46,7 +46,7 @@ AllocNode * create_node(size_t chunk_size) {
     // Credit: Arnold Robbins, 2004 (see REFERENCES.md)
     void *memory_chunk = sbrk((ptrdiff_t) 0);
     if (brk(memory_chunk + chunk_size) < 0) {
-        puts("Memory allocation failed\n");
+        puts("ERROR: Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -71,8 +71,8 @@ void * alloc(size_t chunk_size) {
 
     // If a node was obtained from the Freed List, zero its memory_chunk
     if (allocation != NULL) {
-        for (unsigned long i = 0; i < allocation->chunk_size; ++i) {
-            int8_t* current_byte = allocation->memory_chunk + i;
+        for (size_t i = 0; i < allocation->chunk_size; ++i) {
+            int8_t *current_byte = allocation->memory_chunk + i;
             *current_byte = 0;
         }
     }
@@ -169,5 +169,33 @@ int main(int argc, char **argv) {
     // Cleanup remaining allocated memory
     dealloc(block3);
 
-    return 0;
+    puts("\n\nEND ORIGINAL TESTING CODE\n");
+
+    // Add newline
+    puts("");
+
+    // Handle case where there are too few arguments
+    if (argc < 2) {
+        puts("ERROR: Too few arguments!\n");
+        return EXIT_FAILURE;
+    }
+
+    // Handle case where there are too many arguments
+    else if (argc > 2) {
+        puts("ERROR: Too many arguments!\n");
+        return EXIT_FAILURE;
+    }
+
+    // Open the first argument as a file
+    FILE *data_file = fopen(argv[2], "r");
+
+    // Handle case where file will not open
+    if (!data_file) {
+        printf("ERROR: File %s could not be accessed.\n", argv[2]);
+        return EXIT_FAILURE;
+    }
+    
+    // Add newline and exit the program
+    puts("");
+    return EXIT_SUCCESS;
 }
