@@ -1,6 +1,10 @@
 #include "node_search.h"
 
 AllocNode * find_and_pop_suitable_node(AllocNode **alloc_linked_list, size_t chunk_size) {
+
+    // return null if linked list is empty
+    if (*alloc_linked_list == NULL) return NULL;
+
     // initialise variables 
     AllocNode *previous = NULL;
     AllocNode *current = *alloc_linked_list;
@@ -24,22 +28,22 @@ AllocNode * find_and_pop_suitable_node(AllocNode **alloc_linked_list, size_t chu
         // next node 
         previous = current;
         current = current->next;
-
-        // if best-fit node was found, remove from linked list 
-        if (best_fit != NULL)
-        {
-            if (best_fit_previous == NULL)
-            {
-                *alloc_linked_list = best_fit->next;
-            }
-            else
-            {
-                best_fit_previous->next = best_fit->next;
-            }
-
-            return best_fit;
-        }
     }
-    
+
+    // if best-fit node was found, remove from linked list 
+    if (best_fit != NULL)
+    {
+        if (best_fit_previous == NULL)
+        {
+            *alloc_linked_list = best_fit->next;
+        }
+        else
+        {
+            best_fit_previous->next = best_fit->next;
+        }
+
+        return best_fit;
+    }
+
     return NULL;
 }
