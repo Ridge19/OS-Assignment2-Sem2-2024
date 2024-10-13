@@ -8,3 +8,6 @@ Joshua James Catherine Jane Moylan
 Ridge Tagala 
 - Student ID: s3934367
 - Email: s3934367@student.rmit.edu.au
+
+How to run the program:
+-----------------------------
