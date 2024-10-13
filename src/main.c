@@ -17,36 +17,6 @@ static AllocNode *freed_list = NULL;
 
 
 
-// Function to create a new AllocNode
-AllocNode * create_node(size_t chunk_size) {
-
-    // Create the AllocNode by growing the address space
-    AllocNode *allocation = sbrk((ptrdiff_t) 0);
-    if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
-        puts("ERROR: Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Create the AllocNode's memory_chunk by growing the address space
-    void *memory_chunk = sbrk((ptrdiff_t) 0);
-    if (brk(memory_chunk + chunk_size) < 0) {
-        puts("ERROR: Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Set the values of the AllocNode
-    allocation->memory_chunk = memory_chunk;
-    allocation->chunk_size = chunk_size;
-    allocation->next = NULL;
-
-    // Return the AllocNode
-    return allocation;
-}
-
-
-
-
-
 // Core allocation function
 void * alloc(size_t chunk_size) {
 
@@ -78,7 +48,24 @@ void * alloc(size_t chunk_size) {
 
     // If a node was not be obtained from the Freed List, make a new one
     else {
-        allocation = create_node(chunk_size);
+
+        // Create the AllocNode by growing the address space
+        allocation = sbrk((ptrdiff_t) 0);
+        if (brk(allocation + ALLOC_NODE_SIZE) < 0) {
+            puts("ERROR: Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Create the AllocNode's memory_chunk by growing the address space
+        void *memory_chunk = sbrk((ptrdiff_t) 0);
+        if (brk(memory_chunk + chunk_size) < 0) {
+            puts("ERROR: Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Set the values of the AllocNode
+        allocation->memory_chunk = memory_chunk;
+        allocation->chunk_size = chunk_size;
     }
 
     // Add the node to the front of the Allocated List
