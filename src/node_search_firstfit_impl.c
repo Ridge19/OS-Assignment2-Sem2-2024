@@ -14,7 +14,7 @@ AllocNode * find_and_pop_suitable_node(AllocNode **alloc_linked_list, size_t chu
 
             // Remove the node from the linked list
             if (previous == NULL) {
-                *alloc_linked_list = current;
+                *alloc_linked_list = current->next;
             }
             else {
                 previous->next = current->next;
