@@ -117,7 +117,8 @@ void dealloc(void *memory_chunk) {
     }
 
     // Report failure to find memory_chunk
-    printf("Block not found in allocated list!\n");
+    puts("ERROR: Cannot deallocate an address that was never allocated.");
+    exit(EXIT_FAILURE);
 }
 
 
